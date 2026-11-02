@@ -24,14 +24,14 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Tizim kutubxonalarini o'rnatish
+    - name: Kutubxonalarni o'rnatish
       run: |
         sudo apt-get update
         sudo apt-get install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev lld build-essential
         python3 -m pip install --upgrade pip
-        python3 -m pip install "Cython<3.0" buildozer virtualenv
+        python3 -m pip install "Cython==0.29.36" buildozer virtualenv
 
-        # Barcha urllib so'rovlariga Mozilla agentini ulash (403 xatosini yo'qotadi)
+        # 403 Forbidden to'sig'ini chetlab o'tish
         PYTHON_PATH=$(python3 -c "import site; print(site.getsitepackages()[0])")
         cat << 'EOF' > "$PYTHON_PATH/sitecustomize.py"
         import urllib.request
@@ -43,11 +43,11 @@ jobs:
         urllib.request.install_opener(opener)
         EOF
 
-    - name: APK yig'ish (Buildozer)
+    - name: Buildozer orqali APK yig'ish
       run: |
         yes | buildozer -v android debug
 
-    - name: APK faylni yuklab olish uchun saqlash
+    - name: APK faylni saqlash
       if: always()
       uses: actions/upload-artifact@v4
       with:
